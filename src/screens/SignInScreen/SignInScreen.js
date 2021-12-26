@@ -9,7 +9,7 @@ import SocialSignInButtons from '../../components/SocialSignInButtons';
 
 import { useNavigation } from '@react-navigation/native';
 
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 const SignInScreen = () => {
     /* const [username, setUsername] = useState('');
