@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView} from 'react-native';
+import { View, Text, ScrollView, Alert} from 'react-native';
 import styles from './styles';
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
@@ -7,14 +7,20 @@ import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 
 import { useForm } from 'react-hook-form';
+import { Auth } from 'aws-amplify';
 
 const ForgotPasswordScreen = () => {
     const { control, handleSubmit, watch } = useForm();
     
     const navigation = useNavigation();
 
-    const onSendPressed = () => {
-        navigation.navigate("NewPasswordScreen");
+    const onSendPressed = async data => {
+        try {
+            await Auth.forgotPassword(data.username);
+            navigation.navigate("NewPasswordScreen");
+        } catch (e) {
+            Alert.alert("Oops", e.message);
+        }
     };
 
     const onSignInPressed = () => {

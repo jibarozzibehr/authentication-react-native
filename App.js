@@ -20,9 +20,16 @@ import {
 
 import Navigation from './src/navigation';
 
+import Amplify from 'aws-amplify';
+import config from './src/aws-exports';
+
+Amplify.configure(config);
+
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
+
+  //Auth.signOut();
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView} from 'react-native';
+import { View, Text, ScrollView, Alert} from 'react-native';
 import { useWindowDimensions } from "react-native";
 import styles from './styles';
 import CustomInput from '../../components/CustomInput';
@@ -9,6 +9,7 @@ import SocialSignInButtons from '../../components/SocialSignInButtons';
 import { useNavigation } from '@react-navigation/native';
 
 import { useForm } from 'react-hook-form';
+import { Auth } from 'aws-amplify';
 
 const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&*+/=?^_{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 
@@ -18,8 +19,23 @@ const SignUpScreen = () => {
 
     const navigation = useNavigation();
 
-    const onRegisterPressed = () => {
-        navigation.navigate("ConfirmEmailScreen");
+    const onRegisterPressed = async (data) => {
+        const {username, password, email, name} = data;
+        try {
+            await Auth.signUp({
+                username,
+                password,
+                attributes: {
+                    email,
+                    name,
+                    preferred_username: username
+                }
+            });
+            navigation.navigate("ConfirmEmailScreen", {username});
+        } catch (e) {
+            Alert.alert("Oops", e.message);
+        }
+
     };
 
     const onSignInPressed = () => {
@@ -40,6 +56,22 @@ const SignUpScreen = () => {
             <View style={styles.root}>
                 <Text style={styles.title}>Create an account</Text>
 
+                <CustomInput
+                    name="name"
+                    control={control}
+                    placeholder="Name"
+                    rules={{
+                        required: 'Name is required.',
+                        minLength: {
+                            value: 1,
+                            message: "Name must be at least 1 character long."
+                        },
+                        maxLength: {
+                            value: 24,
+                            message: "Name can't be more than 24 characters long."
+                        }
+                    }}
+                />
                 <CustomInput
                     name="username"
                     control={control}
